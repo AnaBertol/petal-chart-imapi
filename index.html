@@ -11,173 +11,108 @@
     <script src="https://d3js.org/d3.v7.min.js" crossorigin></script>
     <script src="https://unpkg.com/@babel/standalone/babel.min.js" crossorigin></script>
     
-    <!-- Tailwind CSS removido - usando CSS customizado -->
-    
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
             margin: 0;
             padding: 20px;
+            background-color: #f8f9fa;
         }
         .container {
-            max-width: none; /* Removendo limitação de largura */
-            margin: 0;
-            padding: 0 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+            text-align: center;
         }
-        .main-layout {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            min-height: 100vh;
+        h1 {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 20px;
+            color: #1f2937;
         }
-        .chart-section {
-            width: 100%;
+        .chart-container {
             display: flex;
             justify-content: center;
-        }
-        .controls-section {
-            width: 100%;
+            align-items: center;
+            min-height: 600px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 40px;
+            margin: 20px 0;
         }
         svg {
             overflow: visible !important;
         }
-        
-        /* Desktop layout */
-        @media (min-width: 768px) {
-            .container {
-                padding: 20px;
-                height: 100vh;
-                display: flex;
-                flex-direction: column;
-            }
-            .main-layout {
-                flex-direction: row !important;
-                align-items: stretch;
-                gap: 40px;
-                flex: 1;
-                height: 100%;
-            }
-            .chart-section {
-                flex: 1;
-                display: flex;
-                align-items: center;
-                justify-content: flex-start; /* Alinhado à esquerda */
-                padding: 20px;
-                min-width: 0; /* Importante para flexbox */
-            }
-            .controls-section {
-                flex: 0 0 450px; /* Largura fixa para o painel */
-                display: flex;
-                align-items: center;
-                padding: 20px 0;
-            }
-            .controls {
-                width: 100%;
-                max-width: 400px;
-            }
-            h1 {
-                margin-bottom: 20px;
-            }
-        }
-        
-        /* Controls styling */
-        .controls {
-            background-color: #f3f4f6;
-            padding: 24px;
+        .city-input-container {
+            margin: 20px 0;
+            padding: 20px;
+            background: white;
             border-radius: 12px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            display: inline-block;
         }
-        .slider-container {
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-        .color-indicator {
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            flex-shrink: 0;
-        }
-        .slider-label {
-            width: 120px;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .slider {
-            flex: 1;
-            margin: 0 8px;
-        }
-        .value-display {
-            width: 30px;
-            text-align: right;
-            font-weight: bold;
-            flex-shrink: 0;
-        }
-        button {
-            background-color: #2563eb;
-            color: white;
-            padding: 12px 24px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 500;
-            margin-top: 20px;
-        }
-        button:hover {
-            background-color: #1d4ed8;
-        }
-        input[type="text"] {
-            width: 100%;
-            padding: 12px;
-            border: 1px solid #d1d5db;
-            border-radius: 8px;
-            margin-bottom: 20px;
-            font-size: 16px;
-        }
-        label {
+        .city-input-container label {
             display: block;
-            margin-bottom: 8px;
             font-weight: 600;
             color: #374151;
+            margin-bottom: 8px;
+        }
+        .city-input-container input {
+            padding: 8px 12px;
+            border: 2px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 16px;
+            min-width: 200px;
+            text-align: center;
+        }
+        .city-input-container input:focus {
+            outline: none;
+            border-color: #3b82f6;
+        }
+        .instructions {
+            margin: 20px 0 40px 0;
+            padding: 15px;
+            background: #eff6ff;
+            border-radius: 8px;
+            color: #1e40af;
             font-size: 14px;
         }
-        h1 {
-            font-size: 28px;
-            font-weight: bold;
-            margin-bottom: 30px;
-            text-align: center;
-            color: #1f2937;
+        .city-text-hover {
+            cursor: pointer;
         }
-        @media (min-width: 768px) {
-            h1 {
-                text-align: left;
-                margin-bottom: 20px;
-                font-size: 24px; /* Menor no desktop para economizar espaço */
-            }
+        .city-text-hover:hover {
+            fill: #3b82f6 !important;
+            text-decoration: underline;
         }
-        
-        /* Garantir que o layout funcione corretamente */
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
+        .reset-button {
+            background: #dc2626;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            margin-left: 10px;
         }
-        
-        /* Adicionar debug visual temporário */
-        @media (min-width: 768px) {
-            .chart-section {
-                background-color: rgba(255, 0, 0, 0.05); /* Fundo vermelho claro para debug */
-            }
-            .controls-section {
-                background-color: rgba(0, 255, 0, 0.05); /* Fundo verde claro para debug */
-            }
+        .reset-button:hover {
+            background: #b91c1c;
+        }
+        .circle-hover {
+            cursor: pointer;
+        }
+        .circle-hover:hover {
+            stroke-width: 3 !important;
+            filter: brightness(1.1);
         }
     </style>
 </head>
 <body>
-        <div class="container">
+    <div class="container">
         <h1>Gráfico de Pétalas IMAPI</h1>
+        <div class="instructions">
+            💡 <strong>Instruções:</strong> Clique nos círculos para editar os valores e no nome da cidade para alterá-la
+        </div>
         <div id="root"></div>
     </div>
 
@@ -187,29 +122,42 @@
         const PetalChart = () => {
           const svgRef = useRef(null);
           const [cityName, setCityName] = useState('Porto Alegre, RS');
+          const [editingIndex, setEditingIndex] = useState(null);
           const [data, setData] = useState([
-            { name: "Categoria 1", value: 46, color: "#D0A554", min: 0, max: 100 }, // Amarelo (9h)
-            { name: "Categoria 2", value: 63, color: "#E75A8E", min: 0, max: 100 }, // Rosa
-            { name: "Categoria 3", value: 0, color: "#11A982", min: 0, max: 100 },  // Verde (12h)
-            { name: "Categoria 4", value: 23, color: "#0D7C8F", min: 0, max: 100 }, // Azul
-            { name: "Categoria 5", value: 75, color: "#E37059", min: 0, max: 100 }  // Laranja (3h)
+            { name: "Categoria 1", value: 82, color: "#D0A554", min: 0, max: 100 }, // Amarelo (9h)
+            { name: "Categoria 2", value: 95, color: "#E75A8E", min: 0, max: 100 }, // Rosa
+            { name: "Categoria 3", value: 74, color: "#11A982", min: 0, max: 100 },  // Verde (12h)
+            { name: "Categoria 4", value: 98, color: "#0D7C8F", min: 0, max: 100 }, // Azul
+            { name: "Categoria 5", value: 67, color: "#E37059", min: 0, max: 100 }  // Laranja (3h)
           ]);
 
           const resetData = () => {
             setData([
-              { name: "Categoria 1", value: 46, color: "#D0A554", min: 0, max: 100 },
-              { name: "Categoria 2", value: 63, color: "#E75A8E", min: 0, max: 100 },
-              { name: "Categoria 3", value: 0, color: "#11A982", min: 0, max: 100 },
-              { name: "Categoria 4", value: 23, color: "#0D7C8F", min: 0, max: 100 },
-              { name: "Categoria 5", value: 75, color: "#E37059", min: 0, max: 100 }
+              { name: "Categoria 1", value: 82, color: "#D0A554", min: 0, max: 100 },
+              { name: "Categoria 2", value: 95, color: "#E75A8E", min: 0, max: 100 },
+              { name: "Categoria 3", value: 74, color: "#11A982", min: 0, max: 100 },
+              { name: "Categoria 4", value: 98, color: "#0D7C8F", min: 0, max: 100 },
+              { name: "Categoria 5", value: 67, color: "#E37059", min: 0, max: 100 }
             ]);
             setCityName('Porto Alegre, RS');
+            setEditingIndex(null);
           };
 
-          const handleSliderChange = (index, value) => {
-            const newData = [...data];
-            newData[index].value = parseInt(value, 10);
-            setData(newData);
+          const handleCircleClick = (index) => {
+            const newValue = prompt(`Digite o novo valor para ${data[index].name} (0-100):`, data[index].value);
+            if (newValue !== null && !isNaN(newValue)) {
+              const value = Math.max(0, Math.min(100, parseInt(newValue, 10)));
+              const newData = [...data];
+              newData[index].value = value;
+              setData(newData);
+            }
+          };
+
+          const handleCityClick = () => {
+            const newCity = prompt('Digite o nome da cidade:', cityName);
+            if (newCity !== null && newCity.trim() !== '') {
+              setCityName(newCity.trim());
+            }
           };
 
           const calculateAverage = () => {
@@ -220,15 +168,15 @@
           useEffect(() => {
             if (!svgRef.current) return;
 
-            // Clear ALL previous elements to prevent any duplications
+            // Clear ALL previous elements
             const svg = d3.select(svgRef.current);
             svg.selectAll("*").remove();
             
-            const width = 750; // 1.5x do tamanho original (500)
-            const height = 750; // 1.5x do tamanho original (500)
+            const width = 800;
+            const height = 700;
             const centerX = width / 2;
-            const centerY = height / 2;
-            const radius = Math.min(width, height) * 0.28; // Ajustado para 1.5x
+            const centerY = height / 2 - 80; // Ajustado para dar mais espaço para a flor maior
+            const radius = Math.min(width, height) * 0.375; // Aumentado de 0.25 para 0.375 (50% maior)
             
             // Create gradients for each petal
             const defs = svg.append("defs");
@@ -245,12 +193,12 @@
               gradient.append("stop")
                 .attr("offset", "0%")
                 .attr("stop-color", d.color)
-                .attr("stop-opacity", 0.2);
+                .attr("stop-opacity", 0.1); // Reduzido de 0.2 para 0.1 na base
               
               gradient.append("stop")
                 .attr("offset", "100%")
                 .attr("stop-color", d.color)
-                .attr("stop-opacity", 0.8);
+                .attr("stop-opacity", 0.95); // Aumentado de 0.8 para 0.95 nas pontas
             });
 
             // Function to calculate angle in the semicircle (from 9 o'clock to 3 o'clock)
@@ -261,16 +209,16 @@
             // STEP 1: Draw petals
             data.forEach((d, i) => {
               const angle = calculateAngle(i);
-              const normalizedValue = d.value / d.max; // Normalize the value
+              const normalizedValue = d.value / d.max;
               
               // Calculate petal endpoints based on the normalized value
               const petalLength = radius * normalizedValue;
               const endX = centerX + Math.cos(angle) * petalLength;
               const endY = centerY - Math.sin(angle) * petalLength;
               
-              // Control points for the Bezier curve to create the petal shape
+              // Control points for the Bezier curve to create the petal shape (wider petals)
               const controlDist = petalLength * 0.5;
-              const controlAngleOffset = Math.PI / 6; // 30 degrees
+              const controlAngleOffset = Math.PI / 4; // Aumentado de PI/6 para PI/4 (45 graus) para pétalas mais largas
               
               // Left control point
               const leftControlX = centerX + Math.cos(angle + controlAngleOffset) * controlDist;
@@ -291,7 +239,7 @@
                 .attr("fill", `url(#gradient-${i})`)
                 .attr("stroke", d.color)
                 .attr("stroke-width", 1)
-                .attr("opacity", 0.8);
+                .attr("opacity", 0.9); // Aumentado de 0.8 para 0.9 para melhor visibilidade
             });
             
             // STEP 2: Draw the scale lines and points
@@ -302,8 +250,8 @@
               svg.append("line")
                 .attr("x1", centerX)
                 .attr("y1", centerY)
-                .attr("x2", centerX + Math.cos(angle) * (radius * 1.2)) // Ajustado para a nova posição dos círculos
-                .attr("y2", centerY - Math.sin(angle) * (radius * 1.2)) // Ajustado para a nova posição dos círculos
+                .attr("x2", centerX + Math.cos(angle) * (radius * 1.2))
+                .attr("y2", centerY - Math.sin(angle) * (radius * 1.2))
                 .attr("stroke", "white")
                 .attr("stroke-width", 1)
                 .attr("opacity", 0.6)
@@ -329,19 +277,19 @@
             // STEP 3: Draw connector lines (now after grid lines to be on top)
             data.forEach((d, i) => {
               const angle = calculateAngle(i);
-              const normalizedValue = d.value / d.max; // Normalize the value
+              const normalizedValue = d.value / d.max;
               
-              // Calculate petal endpoints based on the normalized value
+              // Calculate petal endpoints
               const petalLength = radius * normalizedValue;
               const endX = centerX + Math.cos(angle) * petalLength;
               const endY = centerY - Math.sin(angle) * petalLength;
               
-              // Calculate fixed position for circles (at 100% - closer to petals)
-              const maxDistance = radius * 1.2; // Reduzido de 1.5 para 1.2 para aproximar dos círculos
+              // Calculate fixed position for circles
+              const maxDistance = radius * 1.2;
               const circleX = centerX + Math.cos(angle) * maxDistance;
               const circleY = centerY - Math.sin(angle) * maxDistance;
               
-              // Draw connector line from petal tip to fixed circle position (ABOVE GRID LINES)
+              // Draw connector line from petal tip to fixed circle position
               svg.append("line")
                 .attr("x1", endX)
                 .attr("y1", endY)
@@ -352,54 +300,63 @@
                 .attr("opacity", 0.8);
             });
             
-            // STEP 3: Draw the average value and text
+            // STEP 4: Draw the average value and text (with reduced margins)
             const average = calculateAverage();
             
-            // Ajustar posições dos textos proporcionalmente ao tamanho 1.5x
             svg.append("text")
               .attr("x", centerX)
-              .attr("y", centerY + 150) // Ajustado para 1.5x
+              .attr("y", centerY + 120) // Reduzido de 160 para 120 (margem menor)
               .attr("text-anchor", "middle")
-              .attr("font-size", "75px") // Ajustado para 1.5x (60 * 1.25)
+              .attr("font-size", "64px") // Reduzido 20% de 80px para 64px
               .attr("font-weight", "bold")
               .attr("fill", "#5D3A7A")
               .text(average);
             
             svg.append("text")
               .attr("x", centerX)
-              .attr("y", centerY + 185) // Ajustado para 1.5x
+              .attr("y", centerY + 145) // Reduzido de 195 para 145 (margem menor)
               .attr("text-anchor", "middle")
-              .attr("font-size", "18px") // Ajustado para 1.5x
+              .attr("font-size", "14px") // Reduzido 20% de 18px para ~14px
               .attr("fill", "#666")
               .text("PONTOS IMAPI");
             
             svg.append("text")
               .attr("x", centerX)
-              .attr("y", centerY + 235) // Ajustado para 1.5x
+              .attr("y", centerY + 180) // Reduzido de 245 para 180 (margem menor)
               .attr("text-anchor", "middle")
-              .attr("font-size", "42px") // Ajustado para 1.5x
+              .attr("font-size", "35px") // Reduzido 20% de 44px para ~35px
               .attr("font-weight", "bold")
               .attr("fill", "#5D3A7A")
-              .text(cityName);
+              .attr("class", "city-text-hover")
+              .style("cursor", "pointer")
+              .on("click", handleCityClick)
+              .text(cityName)
+              .append("title")
+              .text("Clique para editar o nome da cidade");
             
-            // STEP 4: Draw colored circles with values (LAST, so they appear on top)
+            // STEP 5: Draw colored circles with values (LAST, so they appear on top)
             data.forEach((d, i) => {
               const angle = calculateAngle(i);
               
-              // Calculate the fixed position for the circles (at 100% - closer to petals)
-              const maxDistance = radius * 1.2; // Reduzido de 1.5 para 1.2 para aproximar dos círculos
+              // Calculate the fixed position for the circles
+              const maxDistance = radius * 1.2;
               const circleX = centerX + Math.cos(angle) * maxDistance;
               const circleY = centerY - Math.sin(angle) * maxDistance;
-              const circleRadius = 25;
+              const circleRadius = 15; // Reduzido de 30 para 15 (metade do tamanho)
               
-              // Draw the colored circle
+              // Draw the colored circle with click handler
               svg.append("circle")
                 .attr("cx", circleX)
                 .attr("cy", circleY)
-                .attr("r", circleRadius * 1.4) // Ajustado para 1.4x
+                .attr("r", circleRadius)
                 .attr("fill", d.color)
                 .attr("stroke", "white")
-                .attr("stroke-width", 1.5); // Ajustado para 1.5x
+                .attr("stroke-width", 1) // Reduzido de 2 para 1 proporcionalmente
+                .attr("class", "circle-hover")
+                .style("cursor", "pointer")
+                .on("click", () => handleCircleClick(i))
+                .append("title")
+                .text(`${d.name}: ${d.value} (clique para editar)`);
               
               // Add the value text
               svg.append("text")
@@ -409,65 +366,24 @@
                 .attr("dominant-baseline", "central")
                 .attr("fill", "white")
                 .attr("font-weight", "bold")
-                .attr("font-size", "22px") // Ajustado para 1.4x (16 * 1.4)
+                .attr("font-size", "12px") // Reduzido de 24px para 12px (metade)
+                .style("pointer-events", "none") // Prevent text from blocking clicks
                 .text(d.value);
             });
             
           }, [data, cityName]);
 
           return (
-            <div className="flex flex-col items-center space-y-6">
-              <div className="w-full max-w-4xl">
+            <div>
+              <div className="chart-container">
                 <svg 
-            ref={svgRef} 
-            width="100%" 
-            height="700" 
-            viewBox="0 0 600 700" 
-            preserveAspectRatio="xMidYMid meet"
-            style={{overflow: "visible"}}
-          ></svg>
-              </div>
-              
-              <div className="w-full max-w-4xl p-4 bg-gray-100 rounded-lg">
-                <div className="mb-4">
-                  <label className="block text-sm font-medium text-gray-700 mb-1">Nome da cidade:</label>
-                  <input
-                    type="text"
-                    value={cityName}
-                    onChange={(e) => setCityName(e.target.value)}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  />
-                </div>
-                
-                <div className="space-y-4">
-                  {data.map((item, index) => (
-                    <div key={index} className="flex items-center">
-                      <div 
-                        className="w-4 h-4 rounded-full mr-2" 
-                        style={{ backgroundColor: item.color }}
-                      ></div>
-                      <span className="w-32 text-sm">{item.name}:</span>
-                      <input
-                        type="range"
-                        min={item.min}
-                        max={item.max}
-                        value={item.value}
-                        onChange={(e) => handleSliderChange(index, e.target.value)}
-                        className="flex-grow mx-2"
-                      />
-                      <span className="w-8 text-right">{item.value}</span>
-                    </div>
-                  ))}
-                </div>
-                
-                <div className="mt-6">
-                  <button 
-                    onClick={resetData}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                  >
-                    Resetar Valores
-                  </button>
-                </div>
+                  ref={svgRef} 
+                  width="100%" 
+                  height="700" 
+                  viewBox="0 0 800 700" 
+                  preserveAspectRatio="xMidYMid meet"
+                  style={{maxWidth: "800px", overflow: "visible"}}
+                ></svg>
               </div>
             </div>
           );
